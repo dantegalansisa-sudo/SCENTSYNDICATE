@@ -1,0 +1,105 @@
+PROMPT — DEMO WEB SCENT SYNDICATE
+
+Saludos, Claude. Te presento un proyecto sumamente especial: una demo para un cliente potencial que vende perfumes en el mercado estadounidense (inicialmente Puerto Rico). Hay que dar lo mejor, con las mejores herramientas, para un resultado de nivel internacional.
+
+Es una DEMO: no tiene que ser enorme, pero sí debe sentirse como un producto real, completo y premium.
+
+
+1. LA MARCA
+
+Nombre: Scent Syndicate
+Tagline: More Than Fragrance
+Sello gráfico: "Approved by the Syndicate"
+
+Scent Syndicate es una marca y comunidad para personas que disfrutan descubrir, explorar y coleccionar perfumes. Combina la exclusividad de la perfumería de lujo con una experiencia moderna, accesible y cercana.
+
+Identidad: moderna, sofisticada, juvenil, premium y con personalidad. Exclusiva, pero acogedora.
+
+Usa el nombre "Scent Syndicate" de forma inteligente en la web: en el copy, en los nombres de secciones y colecciones, en el sello "Approved by the Syndicate" y en microinteracciones. Que la palabra "Syndicate" (comunidad, club, círculo exclusivo) se sienta en la experiencia, sin abusar.
+
+Logo: si está en la carpeta del proyecto, usa el archivo oficial. No recrees ni inventes un logo. Si no está, usa el nombre como texto tipográfico.
+
+
+2. OBJETIVO
+
+Una tienda online premium, elegante, animada, scrolleable y orientada a la conversión, que convierta el descubrimiento de fragancias en una experiencia de marca. Que también funcione como extensión de su comunidad en Instagram (gran parte del tráfico viene de ahí).
+
+Moneda: USD. Idioma: inglés como principal, con selector EN / ES.
+
+
+3. MÓVIL Y PC: DOS EXPERIENCIAS ÓPTIMAS
+
+No hagas una versión copiada de la otra. Diseña una experiencia óptima para móvil y otra óptima para PC. No tienen que ser idénticas.
+
+• Móvil: pensada para el cliente que llega desde Instagram. Hero de impacto, navegación con el pulgar, botón de compra siempre a mano, carrito rápido.
+• PC: aprovecha el espacio para composiciones editoriales, animaciones más amplias y un hero más cinematográfico.
+
+Cada versión debe tener su propio hero, sumamente elegante y estético.
+
+
+4. DISEÑO Y DIRECCIÓN VISUAL
+
+Estética editorial de lujo, contemporánea.
+
+• Paleta base: negro, ámbar, crema, beige y piedra natural.
+• Pedestales de mármol o travertino, texturas minerales, luz cálida.
+• Tipografía moderna, elegante y legible.
+• Composiciones limpias, con aire, y el producto como protagonista.
+
+MUY IMPORTANTE con la paleta: no uses el mismo fondo (crema o blanco) en todas las secciones. Eso cansa. Alterna y combina: secciones oscuras en negro y ámbar, secciones claras en piedra o beige, transiciones de color entre secciones mientras se hace scroll. Que cada sección se sienta como una experiencia diferente, pero todo coherente con la marca.
+
+Usa recursos visuales del mundo de la perfumería: gotas, vapor o neblina, notas olfativas (cítricos, flores, maderas, especias), cristal, luz a través del frasco.
+
+
+5. EL HERO
+
+El hero es lo más importante. Cuando el cliente entra, tiene que respirar elegancia: animado, sumamente bonito, que invite a hacer scroll.
+
+
+6. ANIMACIONES Y SCROLL
+
+• Web scrolleable con animaciones en toda la estructura, no solo en el hero.
+• Animaciones ligadas al scroll: frascos que entran, giran o se elevan; notas olfativas que aparecen por capas (salida, corazón, fondo); textos que se revelan.
+• Transiciones elegantes y sutiles, sin sacrificar la velocidad.
+• Usa el sello "Approved by the Syndicate" como elemento animado recurrente (por ejemplo, un sello que aparece o gira sobre productos destacados), de forma lógica y sin saturar.
+• Cursor clásico. NO uses cursor animado ni personalizado.
+• Respeta prefers-reduced-motion.
+
+
+7. ESTRUCTURA DEL SITIO (DEMO)
+
+El Home no debe verse abrumado ni aburrido: que respire elegancia scroll por scroll.
+
+• Home: hero de impacto, presentación de la marca, productos destacados, New Arrivals, acceso a colecciones y un bloque de comunidad / Instagram.
+• Shop All: catálogo con filtros (marca, familia olfativa, precio, tipo) y búsqueda.
+• Collections: Niche & Luxury, Designer Fragrances, Arabian & Inspired, Decants, Bundles & Discovery Sets, New Arrivals.
+• Product Page: nombre, marca, descripción corta, pirámide de notas (salida, corazón, fondo), selector de tamaño (frasco completo o decant de 3 ml, 5 ml, 10 ml), precio por presentación, disponibilidad, cantidad y botón de compra.
+• Discovery Sets & Bundles.
+• About Us: historia y filosofía de la marca.
+• FAQ: decants, autenticidad, pedidos, envíos y devoluciones.
+• Contact: formulario y enlaces a redes.
+
+Funciones de la demo: carrito funcional (lado del cliente), código de descuento de ejemplo, best sellers, reseñas de ejemplo. El checkout puede ser simulado.
+
+
+8. RECURSOS DISPONIBLES
+
+En la carpeta del proyecto tienes:
+
+• 10 fotos de perfumes sin fondo (PNG).
+• 5 fotos de modelos (mujeres y hombres).
+• 2 animaciones para posible uso en el hero (una de una mata/planta y otra de un árbol).
+• Inspiraciones sacadas de Pinterest.
+
+No tienes que usarlo todo. Son herramientas: usa lo que necesites, cuando lo necesites.
+
+Usa el contenido de forma estratégica para darle flow y color a la web. NO amontones las fotos en una galería ni en un carrusel. Ubica cada imagen donde tenga sentido (por ejemplo, un modelo junto a una colección, un frasco sobre un pedestal en el hero) y preséntala animada y scrolleable.
+
+Las inspiraciones de Pinterest son solo referencia. No te limites a ellas: si puedes hacer algo superior, hazlo.
+
+
+9. LIBERTAD CREATIVA
+
+Tienes toda la libertad para crear algo brutal en diseño, animación y experiencia, siempre con coherencia en toda la estructura. Aplica los criterios y funciones que debe tener una tienda premium de perfumes en el mercado estadounidense.
+
+Ejecuta el proyecto completo. Si tienes alguna pregunta, házmela.

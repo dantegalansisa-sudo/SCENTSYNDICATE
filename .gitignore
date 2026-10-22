@@ -1,0 +1,9 @@
+node_modules
+dist
+*.local
+.DS_Store
+# raw source assets (optimized copies live in public/images)
+/*.png
+/*.jpeg
+.claude/
+*.tsbuildinfo
