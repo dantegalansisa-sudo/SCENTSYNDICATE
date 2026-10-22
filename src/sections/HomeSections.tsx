@@ -1,184 +1,191 @@
 import { useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useStore } from '../context/Store';
-import { collections, products, reviews, type Collection } from '../data/products';
+import { money, useStore } from '../context/Store';
+import { collections, families, getProduct, products, reviews, sizesFor, type Family } from '../data/products';
 import ProductCard from '../components/ProductCard';
+import ProductVisual from '../components/ProductVisual';
 import RevealText from '../components/RevealText';
 import MagneticButton from '../components/MagneticButton';
 import Seal from '../components/Seal';
 import Stars from '../components/Stars';
-import { IconArrow, IconInstagram } from '../components/Icons';
+import { IconArrow, IconBag, IconCheck, IconInstagram } from '../components/Icons';
 import { EASE, stagger } from '../utils';
 import type { TKey } from '../data/i18n';
 
-/* ——— Collections: editorial pairing of models with each circle ——— */
-function CollectionPanel({ c, i }: { c: Collection; i: number }) {
+/* ——— Trust strip ——— */
+export function TrustBar() {
+  const { l } = useStore();
+  const items = [
+    { en: '100% authentic, batch-verified', es: '100% auténtico, batch verificado' },
+    { en: 'Decants 3 · 5 · 10 ml', es: 'Decants 3 · 5 · 10 ml' },
+    { en: 'Free shipping over $100', es: 'Envío gratis sobre $100' },
+    { en: 'Ships in 24h from Puerto Rico', es: 'Sale en 24h desde Puerto Rico' },
+  ];
+  return (
+    <motion.ul className="trustbar" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+      {items.map((x) => (
+        <motion.li key={x.en} variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}>
+          <IconCheck /> {l(x)}
+        </motion.li>
+      ))}
+    </motion.ul>
+  );
+}
+
+/* ——— Shop by collection: compact category tiles ——— */
+export function ShopCategories() {
   const { l, t } = useStore();
-  const ref = useRef<HTMLAnchorElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const y = useTransform(scrollYProgress, [0, 1], ['-10%', '10%']);
+  const thumbs: Record<string, string> = {
+    'niche-luxury': 'baccarat-rouge-540',
+    designer: 'dior-sauvage',
+    'arabian-inspired': 'lattafa-khamrah',
+    decants: 'creed-aventus',
+    'discovery-sets': 'the-initiation',
+    'new-arrivals': 'miss-dior',
+  };
   return (
-    <motion.div
-      className={`colpanel colpanel--${i}`}
-      initial={{ opacity: 0, y: 70 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 1, ease: EASE.out, delay: (i % 2) * 0.12 }}
-    >
-      <Link ref={ref} to={`/collections/${c.id}`} className={`colpanel__link colpanel__link--${c.tone}`}>
-        <div className="colpanel__img">
-          <motion.img src={c.image} alt="" style={{ y }} loading="lazy" />
-        </div>
-        <div className="colpanel__text">
-          <span className="colpanel__num">0{i + 1}</span>
-          <span className="colpanel__kicker">{l(c.kicker)}</span>
-          <h3>{l(c.title)}</h3>
-          <p>{l(c.blurb)}</p>
-          <span className="colpanel__cta">{t('collections.explore')} <IconArrow /></span>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
-
-export function CollectionsShowcase() {
-  const { t } = useStore();
-  const shown = collections.filter((c) => c.id !== 'new-arrivals');
-  return (
-    <section className="cols sec sec--beige">
-      <div className="sec__head">
-        <span className="kicker kicker--dark">{t('collections.kicker')}</span>
-        <RevealText tag="h2" className="h-display">{t('collections.title')}</RevealText>
+    <section className="block">
+      <div className="block__head">
+        <h2 className="h-block">{l({ en: 'Shop by collection', es: 'Compra por colección' })}</h2>
+        <Link to="/shop" className="link-more">{t('viewAll')} <IconArrow /></Link>
       </div>
-      <div className="cols__grid">
-        {shown.map((c, i) => <CollectionPanel key={c.id} c={c} i={i} />)}
-      </div>
-    </section>
-  );
-}
-
-/* ——— New arrivals, framed by the magnolia branch ——— */
-export function NewArrivals() {
-  const { t } = useStore();
-  const items = products.filter((p) => p.isNew && p.kind === 'fragrance').slice(0, 4);
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const bx = useTransform(scrollYProgress, [0, 1], ['18%', '-6%']);
-  const br = useTransform(scrollYProgress, [0, 1], [8, -4]);
-  return (
-    <section ref={ref} className="newarr sec sec--sage">
-      <motion.img src="images/magnolia-branch.webp" alt="" className="newarr__branch" style={{ x: bx, rotate: br }} loading="lazy" />
-      <div className="sec__head sec__head--row">
-        <div>
-          <span className="kicker">{t('new.kicker')}</span>
-          <RevealText tag="h2" className="h-display">{t('new.title')}</RevealText>
-        </div>
-        <Link to="/collections/new-arrivals" className="link-arrow">{t('viewAll')} <IconArrow /></Link>
-      </div>
-      <motion.div className="grid4 hscroll-sm" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}>
-        {items.map((p) => <ProductCard key={p.id} product={p} tone="blush" />)}
+      <motion.div className="cats" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
+        {collections.map((c, i) => (
+          <motion.div key={c.id} variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE.out } } }}>
+            <Link to={`/collections/${c.id}`} className={`cat cat--${i % 6}`}>
+              <span className="cat__name">{l(c.title)}</span>
+              <span className="cat__img"><ProductVisual product={getProduct(thumbs[c.id])!} /></span>
+            </Link>
+          </motion.div>
+        ))}
       </motion.div>
     </section>
   );
 }
 
-/* ——— Decants: vials rise in ascending size ——— */
-function Vial({ ml, delay }: { ml: 3 | 5 | 10; delay: number }) {
-  const h = { 3: 120, 5: 160, 10: 210 }[ml];
-  return (
-    <motion.div
-      className="vial"
-      initial={{ y: 120, opacity: 0 }}
-      whileInView={{ y: 0, opacity: 1 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 1.1, delay, ease: EASE.out }}
-    >
-      <svg viewBox={`0 0 60 ${h}`} style={{ height: h }} aria-hidden>
-        <defs>
-          <linearGradient id={`vl${ml}`} x1="0" x2="1">
-            <stop offset="0" stopColor="#b97a2e" />
-            <stop offset=".5" stopColor="#f1c27a" />
-            <stop offset="1" stopColor="#a8661f" />
-          </linearGradient>
-        </defs>
-        <rect x="20" y="0" width="20" height="22" rx="3" fill="#1a1410" />
-        <rect x="12" y="20" width="36" height={h - 22} rx="8" fill="rgba(255,255,255,.35)" stroke="rgba(26,20,16,.35)" />
-        <motion.rect
-          x="15"
-          width="30"
-          rx="6"
-          fill={`url(#vl${ml})`}
-          initial={{ y: h - 4, height: 0 }}
-          whileInView={{ y: 40, height: h - 44 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.6, delay: delay + 0.5, ease: EASE.out }}
-        />
-        <rect x="17" y="30" width="4" height={h - 50} rx="2" fill="rgba(255,255,255,.5)" />
-      </svg>
-      <strong>{ml} ml</strong>
-    </motion.div>
-  );
-}
-
-export function Decants() {
-  const { t } = useStore();
-  return (
-    <section className="decants sec sec--stone">
-      <div className="decants__grid">
-        <div className="decants__copy">
-          <span className="kicker kicker--dark">{t('decants.kicker')}</span>
-          <RevealText tag="h2" className="h-display">{t('decants.title')}</RevealText>
-          <p className="lede lede--dark">{t('decants.sub')}</p>
-          <ul className="decants__list">
-            {([3, 5, 10] as const).map((ml) => (
-              <li key={ml}><strong>{ml} ml</strong><span>{t(`decants.${ml}` as TKey)}</span></li>
-            ))}
-          </ul>
-          <MagneticButton to="/collections/decants" className="btn btn--dark">{t('hero.cta2')} <IconArrow /></MagneticButton>
-        </div>
-        <div className="decants__vials">
-          <div className="decants__slab" aria-hidden />
-          <Vial ml={3} delay={0} />
-          <Vial ml={5} delay={0.15} />
-          <Vial ml={10} delay={0.3} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ——— Best sellers + reviews ——— */
+/* ——— Best sellers, filterable by olfactory family ——— */
 export function BestSellers() {
   const { t, l } = useStore();
-  const items = products.filter((p) => p.bestSeller).slice(0, 4);
+  const [fam, setFam] = useState<Family | 'all'>('all');
+  const pool = products.filter((p) => p.kind === 'fragrance');
+  const shown = (fam === 'all' ? pool.filter((p) => p.bestSeller || p.approved) : pool.filter((p) => p.family === fam)).slice(0, 8);
   return (
-    <section className="best sec sec--cream">
-      <div className="sec__head sec__head--row">
+    <section className="block block--white">
+      <div className="block__head">
         <div>
           <span className="kicker kicker--dark">{t('best.kicker')}</span>
-          <RevealText tag="h2" className="h-display">{t('best.title')}</RevealText>
+          <RevealText tag="h2" className="h-block">{l({ en: 'Find your signature', es: 'Encuentra tu firma' })}</RevealText>
         </div>
-        <Link to="/shop" className="link-arrow link-arrow--dark">{t('viewAll')} <IconArrow /></Link>
+        <Link to="/shop" className="link-more">{l({ en: 'Shop all', es: 'Ver tienda' })} <IconArrow /></Link>
       </div>
-      <motion.div className="grid4 hscroll-sm" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}>
+      <div className="tabs" role="tablist">
+        {(['all', ...families] as const).map((f) => (
+          <button key={f} role="tab" aria-selected={fam === f} className={fam === f ? 'is-on' : ''} onClick={() => setFam(f)}>
+            {fam === f && <motion.span layoutId="tabpill" className="tabs__pill" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />}
+            <span>{f === 'all' ? l({ en: 'Best sellers', es: 'Más vendidos' }) : t(`fam.${f}` as TKey)}</span>
+          </button>
+        ))}
+      </div>
+      <motion.div className="pgrid pgrid--4" layout>
+        <AnimatePresence mode="popLayout">
+          {shown.map((p) => (
+            <motion.div key={p.id} layout initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.94 }} transition={{ duration: 0.4, ease: EASE.out }}>
+              <ProductCard product={p} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+    </section>
+  );
+}
+
+/* ——— Promo bento: discovery set + decants ——— */
+export function PromoBento() {
+  const { l, add, setCartOpen } = useStore();
+  const set = getProduct('the-initiation')!;
+  const decant = getProduct('baccarat-rouge-540')!;
+  const d5 = sizesFor(decant).find((s) => s.id === 'd5')!;
+  return (
+    <section className="block">
+      <div className="bento">
+        <motion.div className="promo promo--sage" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.9, ease: EASE.out }}>
+          <div className="promo__copy">
+            <span className="promo__tag">{l({ en: 'Save $39', es: 'Ahorra $39' })}</span>
+            <h3>{l({ en: 'Not sure yet? Start with The Initiation.', es: '¿Aún no decides? Empieza con The Initiation.' })}</h3>
+            <p>{l({ en: '5 Syndicate icons in 3 ml + $15 credit toward your first full bottle.', es: '5 íconos del Syndicate en 3 ml + $15 de crédito para tu primer frasco.' })}</p>
+            <div className="promo__buy">
+              <span className="promo__price">{money(set.fullPrice)} <s>{money(set.compareAt!)}</s></span>
+              <button className="btn btn--dark" onClick={() => { add(set.id, 'set'); setCartOpen(true); }}><IconBag /> {l({ en: 'Add to bag', es: 'Añadir' })}</button>
+            </div>
+          </div>
+          <motion.div className="promo__visual" initial={{ y: 40, rotate: -4 }} whileInView={{ y: 0, rotate: 0 }} viewport={{ once: true }} transition={{ duration: 1.2, ease: EASE.out }}>
+            <ProductVisual product={set} />
+          </motion.div>
+          <Seal size={84} tone="dark" className="promo__seal" />
+        </motion.div>
+
+        <motion.div className="promo promo--amber" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.9, delay: 0.12, ease: EASE.out }}>
+          <div className="promo__copy">
+            <span className="promo__tag">{l({ en: 'Try before you commit', es: 'Prueba antes de decidir' })}</span>
+            <h3>{l({ en: 'Any scent in 3, 5 or 10 ml', es: 'Cualquier aroma en 3, 5 o 10 ml' })}</h3>
+            <div className="vials">
+              {[3, 5, 10].map((ml, k) => (
+                <motion.span key={ml} className="vialchip" initial={{ y: 30, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 + k * 0.12 }}>
+                  <i style={{ height: 24 + k * 14 }} />{ml} ml
+                </motion.span>
+              ))}
+            </div>
+            <div className="promo__buy">
+              <span className="promo__price"><small>BR540 · 5 ml</small> {money(d5.price)}</span>
+              <MagneticButton to="/collections/decants" className="btn btn--dark">{l({ en: 'Shop decants', es: 'Ver decants' })} <IconArrow /></MagneticButton>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ——— New arrivals row ——— */
+export function NewArrivals() {
+  const { t } = useStore();
+  const items = products.filter((p) => p.isNew).slice(0, 4);
+  return (
+    <section className="block block--rose">
+      <div className="block__head">
+        <div>
+          <span className="kicker kicker--dark">{t('new.kicker')}</span>
+          <RevealText tag="h2" className="h-block">{t('new.title')}</RevealText>
+        </div>
+        <Link to="/collections/new-arrivals" className="link-more">{t('viewAll')} <IconArrow /></Link>
+      </div>
+      <motion.div className="pgrid pgrid--4 hscroll-sm" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}>
         {items.map((p) => <ProductCard key={p.id} product={p} />)}
       </motion.div>
+    </section>
+  );
+}
 
-      <div className="reviews">
-        <div className="reviews__head">
-          <span className="kicker kicker--dark">{t('reviews.kicker')}</span>
-          <h3 className="h-sub">{t('reviews.title')}</h3>
+/* ——— Brand editorial: one image, one idea, one CTA ——— */
+export function Editorial() {
+  const { l } = useStore();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%']);
+  return (
+    <section ref={ref} className="block">
+      <div className="editorial">
+        <div className="editorial__img">
+          <motion.img src="images/model-woman-silk.webp" alt="" style={{ y }} loading="lazy" />
         </div>
-        <div className="reviews__marquee">
-          <div className="reviews__track">
-            {[...reviews, ...reviews].map((r, i) => (
-              <figure className="review" key={i} aria-hidden={i >= reviews.length}>
-                <Stars value={r.rating} small />
-                <blockquote>“{l(r.text)}”</blockquote>
-                <figcaption><strong>{r.name}</strong> · {r.city}<span>{r.product}</span></figcaption>
-              </figure>
-            ))}
+        <div className="editorial__copy">
+          <Seal size={96} tone="amber" />
+          <RevealText tag="h2" className="h-display">{l({ en: 'Approved by the Syndicate', es: 'Aprobado por el Syndicate' })}</RevealText>
+          <p className="lede">{l({ en: 'Every bottle is sourced from authorized distributors, every decant hand-poured from the original. If the circle would not wear it, we do not sell it.', es: 'Cada frasco viene de distribuidores autorizados y cada decant se sirve a mano del original. Si el círculo no lo usaría, no lo vendemos.' })}</p>
+          <div className="editorial__ctas">
+            <MagneticButton to="/shop" className="btn btn--amber">{l({ en: 'Shop the collection', es: 'Comprar la colección' })} <IconArrow /></MagneticButton>
+            <Link to="/about" className="link-more">{l({ en: 'Our story', es: 'Nuestra historia' })} <IconArrow /></Link>
           </div>
         </div>
       </div>
@@ -186,51 +193,41 @@ export function BestSellers() {
   );
 }
 
-/* ——— Community / Instagram ——— */
+/* ——— Reviews + Instagram join ——— */
 export function Community() {
   const { t, l } = useStore();
   const [done, setDone] = useState(false);
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const y1 = useTransform(scrollYProgress, [0, 1], [80, -80]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [-40, 60]);
-  const r1 = useTransform(scrollYProgress, [0, 1], [-6, 2]);
-
   return (
-    <section ref={ref} className="community sec sec--champagne">
-      <div className="community__grid">
-        <div className="community__copy">
-          <span className="kicker">{t('community.kicker')}</span>
-          <RevealText tag="h2" className="h-display">{t('community.title')}</RevealText>
-          <p className="lede">{t('community.sub')}</p>
-          {done ? (
-            <motion.p className="community__ok" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>✦ {t('community.joined')}</motion.p>
-          ) : (
-            <form className="joinform" onSubmit={(e) => { e.preventDefault(); setDone(true); }}>
-              <input type="email" required placeholder={t('community.email')} aria-label={t('community.email')} />
-              <button className="btn btn--amber" type="submit">{t('community.join')}</button>
-            </form>
-          )}
-          <MagneticButton href="https://instagram.com" className="btn btn--line"><IconInstagram /> {t('community.follow')}</MagneticButton>
+    <section className="block block--sage">
+      <div className="block__head block__head--center">
+        <span className="kicker kicker--dark">{t('reviews.kicker')}</span>
+        <h2 className="h-block">{t('reviews.title')}</h2>
+      </div>
+      <div className="reviews__marquee">
+        <div className="reviews__track">
+          {[...reviews, ...reviews].map((r, i) => (
+            <figure className="review" key={i} aria-hidden={i >= reviews.length}>
+              <Stars value={r.rating} small />
+              <blockquote>“{l(r.text)}”</blockquote>
+              <figcaption><strong>{r.name}</strong> · {r.city}<span>{r.product}</span></figcaption>
+            </figure>
+          ))}
         </div>
-
-        <div className="community__visual">
-          <motion.div className="phone" style={{ y: y1, rotate: r1 }}>
-            <div className="phone__bar"><span>scentsyndicate</span><IconInstagram /></div>
-            <div className="phone__post">
-              <img src="images/model-woman-silk.webp" alt="" loading="lazy" />
-              <Seal size={64} tone="amber" className="phone__seal" />
-            </div>
-            <div className="phone__meta">
-              <span>♥ 4,812</span>
-              <p><strong>scentsyndicate</strong> {l({ en: 'Silk, skin and Baccarat Rouge. Who else wears it on a Tuesday? ✦', es: 'Seda, piel y Baccarat Rouge. ¿Quién más lo usa un martes? ✦' })}</p>
-            </div>
-          </motion.div>
-          <motion.div className="igcard" style={{ y: y2 }}>
-            <img src="images/model-man-suit.webp" alt="" loading="lazy" />
-            <span>#ApprovedByTheSyndicate</span>
-          </motion.div>
+      </div>
+      <div className="join">
+        <div>
+          <h3>{t('community.title')}</h3>
+          <p>{l({ en: 'Early drops, private decant lists and 15% off your first order.', es: 'Lanzamientos anticipados, listas privadas de decants y 15% en tu primera orden.' })}</p>
         </div>
+        {done ? (
+          <p className="join__ok">✦ {t('community.joined')}</p>
+        ) : (
+          <form className="joinform" onSubmit={(e) => { e.preventDefault(); setDone(true); }}>
+            <input type="email" required placeholder={t('community.email')} aria-label={t('community.email')} />
+            <button className="btn btn--dark" type="submit">{t('community.join')}</button>
+          </form>
+        )}
+        <a className="join__ig" href="https://instagram.com" target="_blank" rel="noreferrer"><IconInstagram /> @scentsyndicate</a>
       </div>
     </section>
   );

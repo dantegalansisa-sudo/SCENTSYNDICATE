@@ -49,7 +49,7 @@ export default function Shop() {
   const [params, setParams] = useSearchParams();
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(() => params.get('q') ?? '');
   const [fBrands, setBrands] = useState<string[]>([]);
   const [fFam, setFam] = useState<string[]>([]);
   const [fPrice, setPrice] = useState<string[]>([]);
@@ -66,7 +66,9 @@ export default function Shop() {
   }, [params, setParams]);
 
   useEffect(() => {
-    setBrands([]); setFam([]); setPrice([]); setType([]); setQ('');
+    setBrands([]); setFam([]); setPrice([]); setType([]);
+    setQ(params.get('q') ?? '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const results = useMemo(() => {
